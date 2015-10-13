@@ -1,6 +1,5 @@
 import java.util.HashMap;
 import java.util.Scanner;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -11,17 +10,21 @@ public class Auth {
     public static void login() throws InterruptedException {
 
 
+        Scanner scanner = new Scanner(System.in);
+        HashMap<String, String> auth = new HashMap<>();
 
-            Scanner scanner = new Scanner(System.in);
-            HashMap<String, String> auth = new HashMap<>();
+        // Placed as loop unlocker.
+        HashMap<String, Integer> unlock = new HashMap<>();
+        auth.put("iron", "yard");
 
-            // Placed as loop unlocker.
-            HashMap<String, Integer> unlock = new HashMap<>();
-            auth.put("iron", "yard");
 
+        int tries = 0;
         do {
+            tries++;
             System.out.println("Welcome to the Vault.");
-            System.out.println("Please enter proper credentials to login.");
+            System.out.println("Pleadse enter proper credentials to login.");
+            System.out.println("Warning: You only have five tries before the system locks you out.");
+            System.out.println("You have " + (6 - tries) + " left.");
             System.out.println("Username:");
             String user = scanner.nextLine();
             user = user.toLowerCase();
@@ -44,7 +47,14 @@ public class Auth {
             } else {
                 System.out.println("No such Username exists.  Try Again.");
             }
-        } while (unlock.isEmpty());
+            if (tries > 5) {
+                System.out.println("Security Protocols Engaged.");
+                System.out.println("Terminal Shutting Down In..");
+                Time.fail();
+            }
+
+            } while (unlock.isEmpty()) ;
+        }
     }
-}
+
 
