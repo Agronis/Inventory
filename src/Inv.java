@@ -139,6 +139,16 @@ public class Inv {
                         }
                     }
                 }
+            } else if (input.equals("3") || input.equals("logout") || input.equals("exit") || input.equals("end")) {
+                System.out.println("Are you sure you wish to log out of the Vault?");
+                String listen = scanner.nextLine();
+                listen = listen.toLowerCase();
+                if (listen.equals("yes")) {
+                    System.out.println("Goodbye.");
+                    System.exit(0);
+                } else if (!listen.equals("no")) {
+                    System.out.println("Not a valid choice.. it was just yes or no.  Enjoy the loop.");
+                }
             } else {
                 System.out.println("Please make a valid selection.");
                 Time.menu();
