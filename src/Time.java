@@ -55,6 +55,6 @@ public class Time {
         System.out.println("One");
         System.out.println("Goodbye.");
         System.exit(0);
-        
+
     }
 }

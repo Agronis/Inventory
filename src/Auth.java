@@ -19,38 +19,49 @@ public class Auth {
 
 
         int tries = 0;
+
         do {
+
             tries++;
             System.out.println("Welcome to the Vault.");
-            System.out.println("Pleadse enter proper credentials to login.");
+            System.out.println("Please enter proper credentials to login.");
             System.out.println("Warning: You only have five tries before the system locks you out.");
             System.out.println("You have " + (6 - tries) + " left.");
             System.out.println("Username:");
             String user = scanner.nextLine();
             user = user.toLowerCase();
+
             if (auth.containsKey(user)) {
+
                 System.out.println("Verifying..");
                 TimeUnit.SECONDS.sleep(2);
                 System.out.println("Please enter the password for " + user + ".");
                 String pass = scanner.nextLine();
                 pass = pass.toLowerCase();
-                // There must be a better way than this.. it searches the entire HashMap.
-                // if (pass.equals(auth.containsValue(pass))) {
-                if (pass.equals("yard")) {
+
+                if (auth.containsValue(pass)) {
                     System.out.println("Authenticating..");
                     TimeUnit.SECONDS.sleep(2);
                     System.out.println("User Authenticated - Welcome " + user + ".");
                     unlock.put("Unlock", 1);
+
                 } else {
+
                     System.out.println("Invalid Password. Try Again");
+                    
                 }
+
             } else {
+
                 System.out.println("No such Username exists.  Try Again.");
             }
+
             if (tries > 5) {
+
                 System.out.println("Security Protocols Engaged.");
                 System.out.println("Terminal Shutting Down In..");
                 Time.fail();
+
             }
 
             } while (unlock.isEmpty()) ;
