@@ -1,17 +1,16 @@
 import java.util.HashMap;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Agronis on 10/12/15.
  */
 public class Inv {
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws Exception {
 
         //Code Wide Rules
         Scanner scanner = new Scanner(System.in);
-        HashMap<String, Integer> vault = new HashMap<>();
+        //HashMap<String, Integer> vault = new HashMap<>();
 
         // User Authentication
         Time.boot();
@@ -27,8 +26,11 @@ public class Inv {
             String input = scanner.nextLine();
             input = input.toLowerCase();
 
+            // Calls upon "storage" HashMap for the Vault.
+            Vault.getVault();
+
             if (input.equals("1") || input.contains("inspect")) {
-                System.out.println(vault); // Prints items within vault.
+                System.out.println(Vault.storage); // Prints items within vault.
 
                 // Modify vault container.
             } else if (input.equals("2") || input.equals("modify")) {
@@ -44,11 +46,12 @@ public class Inv {
                     System.out.println("How many " + inputaddItem + " are you adding?");
                     String inputqtyItem = scanner.nextLine();
                     int qtyItem = Integer.valueOf(inputqtyItem);
+                    System.out.println("Which category does this pertain to?");
+                    String inputCat = scanner.nextLine();
 
                     if (qtyItem >= 0) {
-                        vault.put(inputaddItem, qtyItem);
+                        Vault.storage.put(inputaddItem, createItem(inputaddItem, qtyItem, inputCat));
                         System.out.println("Added " + qtyItem + " " + inputaddItem + " to your Vault.");
-                        System.out.println("Returning to the main menu.");
                         Time.menu();
 
                     } else {  // Fail Safe.
@@ -59,7 +62,7 @@ public class Inv {
 
                     while (true) {
 
-                        if (vault.isEmpty()) {   // Fail safe.
+                        if (Vault.storage.isEmpty()) {   // Fail safe.
                             System.out.println("No items in Vault to modify.");
                             System.out.println("You're clearly confused.");
                             System.out.println("Let's try this again..");
@@ -69,12 +72,12 @@ public class Inv {
                         } else {
 
                             System.out.println("Which item would you like to update?");
-                            System.out.println(vault);
+                            System.out.println(Vault.storage);
                             System.out.println("Make a selection based on item's name.");
                             String modVault = scanner.nextLine();
                             modVault = modVault.toUpperCase();
                             // If item is found in vault - process continues.
-                            if (vault.containsKey(modVault)) {
+                            if (Vault.storage.containsKey(modVault)) {
                                 System.out.println("How many " + modVault + " would you like to add?");
                                 System.out.println("If remainder is less than one unit - item will be removed from Vault.");
 
@@ -83,20 +86,21 @@ public class Inv {
                                 String qtyVault = scanner.nextLine();
                                 int mqtyVault = Integer.valueOf(qtyVault);
 
-                                if ((vault.get(modVault) + mqtyVault) <= 0) {
+                                if ((Vault.storage.get(modVault).quantity + mqtyVault) <= 0) {
                                     System.out.println("Are you sure you want to remove " + modVault + "?");
                                     System.out.println("Yes or No");
                                     String choice = scanner.nextLine();
                                     choice = choice.toLowerCase();
 
                                     if (choice.equals("yes")) {
-                                        vault.remove(modVault);
+                                        Vault.storage.remove(modVault);
                                         System.out.println(modVault + " removed from the Vault.");
                                         Time.menu();
                                     }
                                 } else {  // Items added to vault.
-
-                                    vault.put(modVault, vault.get(modVault) + mqtyVault);
+                                    InventoryItem item = Vault.storage.get(modVault);
+                                    item.quantity += mqtyVault;
+                                    Vault.storage.put(modVault, item);
                                     System.out.println("Added " + mqtyVault + " " + modVault + " to your Vault.");
                                     Time.menu();
                                 }
@@ -105,10 +109,10 @@ public class Inv {
                                 System.out.println("Please select an item already in your Vault.");
                             }
                         }
-                    }       // Fail safe.
+                    }
                 } else if (input2.equals("3") || input2.contains("remove")) {
 
-                    if (vault.isEmpty()) {
+                    if (Vault.storage.isEmpty()) {
                         System.out.println("How do you plan on removing something that isn't there?");
                         System.out.println("Are you Houdini?");
                         System.out.println("Let's try this again..");
@@ -117,17 +121,17 @@ public class Inv {
                     } else {
                         // Deleting items from the Vault.
                         System.out.println("Which item do you want to dump from the Vault?");
-                        System.out.println(vault);
+                        System.out.println(Vault.storage);
                         String delItem = scanner.nextLine();
                         delItem = delItem.toUpperCase();
 
-                        if (delItem.equals(vault.get(delItem))) {
+                        if (delItem.equals(Vault.storage.get(delItem))) {
                             System.out.println("Are you sure you wish to remove " + delItem + " from your Vault?");
                             String confirm = scanner.nextLine();
                             confirm = confirm.toLowerCase();
 
                             if (confirm.equals("yes")) {
-                                vault.remove(delItem);
+                                Vault.storage.remove(delItem);
                                 System.out.println(delItem + " has been removed from your Vault.");
                                 Time.menu();
 
@@ -154,5 +158,28 @@ public class Inv {
                 Time.menu();
             }
         }
+    }
+
+    public static InventoryItem createItem(String itemName, int quantity, String category) throws Exception {
+
+        if (category.equals("Weapons")) {
+            return new Weapons(itemName, quantity);
+        }
+        else if (category.equals("Armors")) {
+            return new Armors(itemName, quantity);
+        }
+        else if (category.equals("Utilities")) {
+            return new Utilities(itemName, quantity);
+        }
+        else if (category.equals("Currency")) {
+            return new Currency(itemName, quantity);
+        }
+        else if (category.equals("Skills")) {
+            return new Skills(itemName, quantity);
+
+        } else {
+            throw new Exception("Invalid Category");
+        }
+
     }
 }
